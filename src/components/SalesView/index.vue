@@ -53,7 +53,10 @@
 </template>
 
 <script>
+  import commonDataMixin from '../../mixins/commonDataMixin'
+
   export default {
+    mixins: [commonDataMixin],
     data() {
       return {
         activeIndex: '1',
@@ -86,9 +89,32 @@
             }
           }]
         },
-        chartOption: {
+        chartOption: {}
+      }
+    },
+    computed: {
+      rankData() {
+        return this.activeIndex === '1' ? this.orderRank : this.userRank
+      }
+    },
+    watch: {
+      orderFullYear() {
+        this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额')
+      }
+    },
+    methods: {
+      onMenuSelect(index) {
+        this.activeIndex = index
+        if (index === '1') {
+          this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额')
+        } else {
+          this.render(this.userFullYear, this.userFullYearAxis, '年度用户访问量')
+        }
+      },
+      render(data, axis, title) {
+        this.chartOption = {
           title: {
-            text: '年度销售额',
+            text: title,
             textStyle: {
               fontSize: 12,
               color: '#666'
@@ -98,7 +124,7 @@
           },
           xAxis: {
             type: 'category',
-            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            data: axis,
             axisTick: {
               alignWithLabel: true,
               lineStyle: {
@@ -131,7 +157,7 @@
           series: [{
             type: 'bar',
             barWidth: '35%',
-            data: [200, 250, 300, 350, 300, 250, 200, 250, 300, 350, 300, 250]
+            data
           }],
           color: ['#3398DB'],
           grid: {
@@ -140,49 +166,7 @@
             right: 60,
             bottom: 50
           }
-        },
-        rankData: [
-          {
-            no: 1,
-            name: '麦当劳',
-            money: '323,234'
-          },
-          {
-            no: 2,
-            name: '麦当劳',
-            money: '323,234'
-          },
-          {
-            no: 3,
-            name: '麦当劳',
-            money: '323,234'
-          },
-          {
-            no: 4,
-            name: '麦当劳',
-            money: '323,234'
-          },
-          {
-            no: 5,
-            name: '麦当劳',
-            money: '323,234'
-          },
-          {
-            no: 6,
-            name: '麦当劳',
-            money: '323,234'
-          },
-          {
-            no: 7,
-            name: '麦当劳',
-            money: '323,234'
-          }
-        ]
-      }
-    },
-    methods: {
-      onMenuSelect(index) {
-        this.activeIndex = index
+        }
       }
     }
   }
@@ -237,14 +221,17 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
+
         .sales-view-title {
           margin-top: 20px;
           font-size: 12px;
           color: #666;
           font-weight: 500;
         }
+
         .list-item-wrapper {
           margin-top: 15px;
+
           .list-item {
             display: flex;
             align-items: center;
@@ -259,6 +246,7 @@
               width: 20px;
               height: 20px;
               color: #333;
+
               &.top-no {
                 background: #000;
                 border-radius: 50%;
@@ -266,6 +254,7 @@
                 font-weight: 500;
               }
             }
+
             .list-item-name {
               margin-left: 10px;
               color: #333;
